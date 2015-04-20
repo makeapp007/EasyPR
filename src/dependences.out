@@ -1,0 +1,218 @@
+dependences anylise
+========
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/util.cpp
+========
+system dependences : ['windows.h', 'io.h', 'sys/stat.h', 'dirent.h', 'cstring', 'sys/timeb.h', 'list']
+directory dependences : ['../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/CParser.cpp
+========
+system dependences : ['iostream', 'stdarg.h']
+directory dependences : ['../include/CParser.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/learn_prepare.cpp
+========
+directory dependences : ['../include/plate_recognize.h', '../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/deface.cpp
+========
+system dependences : ['iostream', 'opencv2/opencv.hpp', 'fstream', 'iostream', 'string']
+directory dependences : ['../include/plate_recognize.h', '../include/util.h', '../include/feature.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/mc_data_prepare.cpp
+========
+system dependences : ['iostream', 'cstdlib', 'io.h', 'opencv/cv.h', 'opencv/highgui.h', 'opencv/cvaux.h', 'algorithm']
+directory dependences : ['../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/generate_gdts.cpp
+========
+directory dependences : ['../include/plate_recognize.h', '../include/util.h', '../include/feature.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/util/general_test_prepare.cpp
+========
+directory dependences : ['../include/plate_recognize.h', '../include/util.h', '../include/feature.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/test/test.cpp
+========
+directory dependences : ['../include/plate_locate.h', '../include/plate_judge.h', '../include/chars_segment.h', '../include/chars_identify.h', '../include/plate_detect.h', '../include/chars_recognise.h', '../include/plate_recognize.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/test/accuracy_test.cpp
+========
+directory dependences : ['../include/plate_recognize.h', '../include/util.h', '../include/feature.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/core_func.cpp
+========
+directory dependences : ['../include/prep.h', '../include/core_func.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/plate_locate.cpp
+========
+directory dependences : ['../include/plate_locate.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/plate_detect.cpp
+========
+directory dependences : ['../include/plate_detect.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/feature.cpp
+========
+directory dependences : ['../include/prep.h', '../include/feature.h', '../include/core_func.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/chars_identify.cpp
+========
+directory dependences : ['../include/chars_identify.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/plate_recognize.cpp
+========
+directory dependences : ['../include/plate_recognize.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/chars_segment.cpp
+========
+directory dependences : ['../include/chars_segment.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/plate.cpp
+========
+directory dependences : ['../include/plate.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/plate_judge.cpp
+========
+directory dependences : ['../include/plate_judge.h', '../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/core/chars_recognise.cpp
+========
+directory dependences : ['../include/chars_recognise.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/chars_recognise.h
+========
+directory dependences : ['prep.h', 'chars_segment.h', 'chars_identify.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/chars_segment.h
+========
+directory dependences : ['prep.h', 'core_func.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/chars_identify.h
+========
+directory dependences : ['prep.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/plate_judge.h
+========
+directory dependences : ['prep.h', 'plate.h', 'feature.h', 'core_func.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/plate.h
+========
+directory dependences : ['prep.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/prep.h
+========
+system dependences : ['objbase.h', 'stdlib.h', 'stdio.h', 'io.h', 'iostream', 'fstream', 'assert.h', 'algorithm', 'cstdlib', 'time.h', 'math.h']
+directory dependences : ['opencv2/imgproc/imgproc.hpp', 'opencv2/highgui/highgui.hpp', 'opencv2/nonfree/features2d.hpp', 'opencv/cvaux.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/util.h
+========
+system dependences : ['vector', 'string']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/plate_detect.h
+========
+directory dependences : ['prep.h', 'plate_locate.h', 'plate_judge.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/feature.h
+========
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/plate_recognize.h
+========
+directory dependences : ['prep.h', 'plate_detect.h', 'chars_recognise.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/plate_locate.h
+========
+directory dependences : ['prep.h', 'plate.h', 'core_func.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/CParser.h
+========
+system dependences : ['map', 'string', 'vector', 'sstream', 'stdexcept']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/include/core_func.h
+========
+
+
+========
+File : /home/Archive/Code/EasyPR/src/train/ann_train.cpp
+========
+system dependences : ['opencv/cv.h', 'opencv/cvaux.h', 'windows.h', 'vector', 'iostream', 'cstdlib', 'io.h', 'stdlib.h', 'stdio.h']
+directory dependences : ['opencv2/ml/ml.hpp', 'opencv2/highgui/highgui.hpp', '../include/plate_recognize.h', '../include/feature.h', '../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/train/svm_train.cpp
+========
+directory dependences : ['../include/plate_recognize.h', '../include/feature.h', '../include/util.h']
+
+
+========
+File : /home/Archive/Code/EasyPR/src/main.cpp
+========
+directory dependences : ['include/plate_recognize.h', 'include/util.h', 'include/feature.h', 'include/CParser.h']
+
+
