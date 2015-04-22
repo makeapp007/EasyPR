@@ -20,17 +20,17 @@ set(SOURCE_FILES
     src/core/plate_judge.cpp
     src/core/plate_locate.cpp
     src/core/plate_recognize.cpp
-    src/test/accuracy_test.cpp
-    src/test/test.cpp
-    src/train/ann_train.cpp
-    src/train/svm_train.cpp
-    src/util/deface.cpp
-    src/util/general_test_prepare.cpp
-    src/util/generate_gdts.cpp
-    src/util/learn_prepare.cpp
-    src/util/mc_data_prepare.cpp
-    src/util/util.cpp
-    src/util/CParser.cpp
+#    src/test/accuracy_test.cpp
+#    src/test/test.cpp
+#    src/train/ann_train.cpp
+#    src/train/svm_train.cpp
+#    src/util/deface.cpp
+#    src/util/general_test_prepare.cpp
+#    src/util/generate_gdts.cpp
+#    src/util/learn_prepare.cpp
+#    src/util/mc_data_prepare.cpp
+#    src/util/util.cpp
+#    src/util/CParser.cpp
 )
 
 add_executable(EasyPR ${SOURCE_FILES})
