@@ -9,17 +9,21 @@ find_package(OpenCV REQUIRED)
 set(CMAKE_SOURCE_DIR ./src)
 
 set(SOURCE_FILES
-    src/main.cpp
-    src/core/core_func.cpp
-    src/core/chars_identify.cpp
-    src/core/chars_recognise.cpp
-    src/core/chars_segment.cpp
-    src/core/feature.cpp
-    src/core/plate.cpp
-    src/core/plate_detect.cpp
-    src/core/plate_judge.cpp
+    # src/main.cpp
+    # src/core/core_func.cpp
+    # src/core/chars_identify.cpp
+    # src/core/chars_recognise.cpp
+    # src/core/chars_segment.cpp
+    # src/core/feature.cpp
+    # src/core/plate.cpp
+    # src/core/plate_detect.cpp
+    # src/core/plate_judge.cpp
     src/core/plate_locate.cpp
-    src/core/plate_recognize.cpp
+    # src/core/plate_recognize.cpp
+    src/opencv/cv.hpp
+    src/opencv/cxcore.hpp
+    src/opencv/cxmat.hpp
+    src/opencv/cxoperations.hpp
 #    src/test/accuracy_test.cpp
 #    src/test/test.cpp
 #    src/train/ann_train.cpp

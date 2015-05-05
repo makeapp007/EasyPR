@@ -1,0 +1,11 @@
+int PLGaussianBlur(){}
+int PLDeColor(){}
+int PLSobel(){}
+int PlThreshold(){}
+int PLMopClode(){}
+int PLMopOpen(){}
+int PLFindRect(){}
+int PLVerifySize(){}
+int PLVerifyRotation(){}
+int PLRotate(){}
+int PLResize(){}
