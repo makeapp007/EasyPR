@@ -1,8 +1,9 @@
 //Type Defignation
-typedef struct RGBPoint{char r, g, b;} RGBPoint;
-typedef char APoint;
-typedef char Point;
 
-typedef RGBPoint RGBMat[];
-typedef APoint AMat[];
-typedef Point Mat[];
+typedef struct RGBPoint{double r, g, b;} RGBPoint;
+typedef double APoint;
+typedef double Point;
+
+typedef RGBPoint RGBMat[MAT_HEIGHT][MAT_WIDTH];
+typedef APoint AMat[MAT_HEIGHT][MAT_WIDTH];
+typedef Point Mat[MAT_HEIGHT][MAT_WIDTH];
