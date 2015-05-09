@@ -4,7 +4,7 @@
 #define MAT_HEIGHT 480
 
 #define GaussianR 5
-#define GaussianD 0.5	//0 for default function from GaussianR
+#define GaussianD 0.3	//0 for default function from GaussianR
 
 #define DeColorR 0.299
 #define DeColorG 0.587

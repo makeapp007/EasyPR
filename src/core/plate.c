@@ -11,7 +11,6 @@ int PLGaussianBlur(RGBPoint *rgbmat,RGBPoint *rgbmat_target,int r){
 		return exp(-(x*x+y*y)/(2*sigma*sigma))/(2*M_PI*sigma*sigma);
 	}
 
-	//gaussian function
 	int CalcGaussianMat(double *gaussianmat,int r,double sigma){
 		int i,j;
 		double sum=0;
@@ -106,7 +105,88 @@ int PLSobel(APoint *amat,APoint *amat_target,char direction){
 	}
 }
 
-int PlThreshold(){}
+//ConvertScaleAbs filter
+int PLConvertScaleAbs(APoint *amat,APoint *amat_target){
+	AMat amattarget;
+
+	int i,j;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			if (*(amat+i+j*(MAT_HEIGHT))>255){
+				amattarget[i][j]=255;
+			}else if (*(amat+i+j*(MAT_HEIGHT))<0){
+				amattarget[i][j]=0;
+			}
+		}
+	}
+
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(amat_target+i+j*(MAT_HEIGHT))=amattarget[i][j];
+		}
+	}
+}
+
+//PlThreshold filter & OTSU
+int PlThreshold(APoint *amat,Point *mat_target,char pros){
+	void ClacIntMat(APoint *amat){
+		int i,j;
+		for (i=0;i<MAT_HEIGHT;i++){
+			for (j=0;j<MAT_WIDTH;j++){
+				*(amat+i+j*(MAT_HEIGHT))=(int)(*(amat+i+j*(MAT_HEIGHT)));
+			}
+		}
+	}
+	int ClacOTSU(APoint *amat){
+		int matcount[256];
+		int matWeighting[256];
+		int i,j;
+		for (i=0;i<=255;i++){
+			matcount[i]=0;
+			matWeighting[i]=0;
+		}
+		for (i=0;i<MAT_HEIGHT;i++){
+			for (j=0;j<MAT_WIDTH;j++){
+				matcount[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=1;
+				matWeighting[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=(int)(*(amat+i+j*(MAT_HEIGHT)));
+			}
+		}
+		for (i=1;i<=255;i++){
+			matcount[i]+=matcount[i-1];	//前向和
+			matWeighting[i]+=matWeighting[i-1];	//前向和
+		}
+		double maxG=0;
+		int threshold;
+		//平均加权灰度
+		double u=1.0*matWeighting[255]/matcount[255];
+		for (i=1;i<=255;i++){
+			//正向阀值占比
+			double w1=1.0*(matcount[255]-matcount[i-1])/matcount[255];
+			//平均加权灰度
+			double u1=1.0*(matWeighting[255]-matWeighting[i-1])/(matcount[255]-matcount[i-1]);
+			//反向阀值占比
+			double w2=1-w1;
+			//平均加权灰度
+			double u2=1.0*matWeighting[i-1]/matcount[i-1];
+
+			double G=w1*(u1-u)*(u1-u)+w2*(u2-u)*(u2-u);
+			if (G>maxG){
+				maxG=G;
+				threshold=i;
+			}
+		}
+		return(threshold);
+	}
+
+	ClacIntMat(amat);
+	int threshold=ClacOTSU(amat);
+	int i,j;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(mat_target+i+j*(MAT_HEIGHT))=((*(amat+i+j*(MAT_HEIGHT)))>threshold);
+		}
+	}
+}
 int PLMopClode(){}
 int PLMopOpen(){}
 int PLFindRect(){}

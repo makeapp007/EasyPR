@@ -47,3 +47,18 @@ int PrintAMat(APoint *mat,char name[]){
 	fclose(out);
 	return 0;
 }
+
+int PrintMat(Point *mat,char name[]){
+	FILE *out;
+	char path[]=DEFAULT_OUTPUT;
+	strcat(path,name);
+	out=fopen(path,"w");
+	int i,j;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			fprintf(out,"%lf %lf %lf\n",(*(mat+i*(MAT_WIDTH)+j))*255,(*(mat+i*(MAT_WIDTH)+j))*255,(*(mat+i*(MAT_WIDTH)+j))*255);
+		}
+	}
+	fclose(out);
+	return 0;
+}
