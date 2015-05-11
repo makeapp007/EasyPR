@@ -3,42 +3,43 @@
 #include "../include/prep.h"
 #include "../include/plate.h"
 
+//gaussian function
+double plGaussian(int x,int y,double sigma){
+	return exp(-(x*x+y*y)/(2*sigma*sigma))/(2*PI*sigma*sigma);
+}
+
+//gaussian mat
+int plCalcGaussianMat(double *gaussianmat,int r,double sigma){
+	int i,j;
+	double sum=0;
+	for (i=0;i<2*r+1;i++){
+		for (j=0;j<2*r+1;j++){
+			if ((i<=r)&&(j<=r)){
+				*(gaussianmat+i*(2*r+1)+j)=plGaussian(i-r,j-r,sigma);
+			}else{
+				int i0=r-abs(i-r);
+				int j0=r-abs(j-r);
+				*(gaussianmat+i*(2*r+1)+j)=*(gaussianmat+i0*(2*r+1)+j0);
+			}
+			sum+=*(gaussianmat+i*(2*r+1)+j);
+		}
+	}
+	for (i=0;i<2*r+1;i++){
+		for (j=0;j<2*r+1;j++){
+			*(gaussianmat+i*(2*r+1)+j)=*(gaussianmat+i*(2*r+1)+j)/sum;
+		}
+	}
+	return 0;
+}
+
 //gaussian blur
 int PLGaussianBlur(RGBPoint *rgbmat,RGBPoint *rgbmat_target,int r){
-
-	//gaussian function
-	double Gaussian(int x,int y,double sigma){
-		return exp(-(x*x+y*y)/(2*sigma*sigma))/(2*M_PI*sigma*sigma);
-	}
-
-	int CalcGaussianMat(double *gaussianmat,int r,double sigma){
-		int i,j;
-		double sum=0;
-		for (i=0;i<2*r+1;i++){
-			for (j=0;j<2*r+1;j++){
-				if ((i<=r)&&(j<=r)){
-					*(gaussianmat+i*(2*r+1)+j)=Gaussian(i-r,j-r,sigma);
-				}else{
-					int i0=r-abs(i-r);
-					int j0=r-abs(j-r);
-					*(gaussianmat+i*(2*r+1)+j)=*(gaussianmat+i0*(2*r+1)+j0);
-				}
-				sum+=*(gaussianmat+i*(2*r+1)+j);
-			}
-		}
-		for (i=0;i<2*r+1;i++){
-			for (j=0;j<2*r+1;j++){
-				*(gaussianmat+i*(2*r+1)+j)=*(gaussianmat+i*(2*r+1)+j)/sum;
-			}
-		}
-		return 0;
-	}
 
 	RGBMat rgbmattarget;
 	double sigma=(GaussianD==0)?0.3*((GaussianR-1)*0.5-1)+0.8:GaussianD;	//sigma default function from opencv
 	double gaussianmat[2*r+1][2*r+1];
 	int result;
-	result=CalcGaussianMat(gaussianmat,r,sigma);
+	result=plCalcGaussianMat(gaussianmat,r,sigma);
 
 	int i,j,k,l;
 	for (i=0;i<MAT_HEIGHT;i++){
@@ -61,41 +62,44 @@ int PLGaussianBlur(RGBPoint *rgbmat,RGBPoint *rgbmat_target,int r){
 	}
 }
 
+//gray function
+double plCalcGray(double r,double g,double b){
+	return r*DeColorR+g*DeColorG+b*DeColorB;
+}
+
 //decolor filter
 int PLDeColor(RGBPoint *rgbmat,APoint *amat){
-	double CalcGray(double r,double g,double b){
-		return r*DeColorR+g*DeColorG+b*DeColorB;
-	}
 
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(amat+i+j*(MAT_HEIGHT))=CalcGray((*(rgbmat+i+j*(MAT_HEIGHT))).r,(*(rgbmat+i+j*(MAT_HEIGHT))).g,(*(rgbmat+i+j*(MAT_HEIGHT))).b);
+			*(amat+i+j*(MAT_HEIGHT))=plCalcGray((*(rgbmat+i+j*(MAT_HEIGHT))).r,(*(rgbmat+i+j*(MAT_HEIGHT))).g,(*(rgbmat+i+j*(MAT_HEIGHT))).b);
 		}
 	}
 }
 
+//sobel function
+double plCalcSobel(int x,int y,APoint *amat,double SobleModule[3][3]){
+	double sum=0;
+	int i,j;
+	for (i=0;i<3;i++){
+		for (j=0;j<3;j++){
+			int i0=((x+i-1>=MAT_HEIGHT)||(x+i-1<0))?x-i+1:x+i-1;
+			int j0=((y+j-1>=MAT_WIDTH)||(y+j-1<0))?y-j+1:y+j-1;
+			sum+=SobleModule[i][j]*(*(amat+i0+j0*(MAT_HEIGHT)));
+		}
+	}
+	return sum;
+}
+
 //Sobel filter
 int PLSobel(APoint *amat,APoint *amat_target,char direction){
-	double CalcSobel(int x,int y,APoint *amat,double SobleModule[3][3]){
-		double sum=0;
-		int i,j;
-		for (i=0;i<3;i++){
-			for (j=0;j<3;j++){
-				int i0=((x+i-1>=MAT_HEIGHT)||(x+i-1<0))?x-i+1:x+i-1;
-				int j0=((y+j-1>=MAT_WIDTH)||(y+j-1<0))?y-j+1:y+j-1;
-				sum+=SobleModule[i][j]*(*(amat+i0+j0*(MAT_HEIGHT)));
-			}
-		}
-		return sum;
-	}
-
 	AMat amattarget;
 
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			amattarget[i][j]=CalcSobel(i,j,amat,(direction==PLSobel_X)?SobleModuleX:SobleModuleY);
+			amattarget[i][j]=plCalcSobel(i,j,amat,(direction==PLSobel_X)?SobleModuleX:SobleModuleY);
 		}
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
@@ -127,59 +131,63 @@ int PLConvertScaleAbs(APoint *amat,APoint *amat_target){
 	}
 }
 
+//float mat to int mat function
+void plClacIntMat(APoint *amat){
+	int i,j;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(amat+i+j*(MAT_HEIGHT))=(int)(*(amat+i+j*(MAT_HEIGHT)));
+		}
+	}
+}
+
+//OTSU function
+int plClacOTSU(APoint *amat){
+	int matcount[256];
+	int matWeighting[256];
+	int i,j;
+	for (i=0;i<=255;i++){
+		matcount[i]=0;
+		matWeighting[i]=0;
+	}
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			matcount[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=1;
+			matWeighting[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=(int)(*(amat+i+j*(MAT_HEIGHT)));
+		}
+	}
+	for (i=1;i<=255;i++){
+		matcount[i]+=matcount[i-1];	//前向和
+		matWeighting[i]+=matWeighting[i-1];	//前向和
+	}
+	double maxG=0;
+	int threshold;
+	//平均加权灰度
+	double u=1.0*matWeighting[255]/matcount[255];
+	for (i=1;i<=255;i++){
+		//正向阀值占比
+		double w1=1.0*(matcount[255]-matcount[i-1])/matcount[255];
+		//平均加权灰度
+		double u1=1.0*(matWeighting[255]-matWeighting[i-1])/(matcount[255]-matcount[i-1]);
+		//反向阀值占比
+		double w2=1-w1;
+		//平均加权灰度
+		double u2=1.0*matWeighting[i-1]/matcount[i-1];
+
+		double G=w1*(u1-u)*(u1-u)+w2*(u2-u)*(u2-u);
+		if (G>maxG){
+			maxG=G;
+			threshold=i;
+		}
+	}
+	return(threshold);
+}
+
 //PlThreshold filter & OTSU
 int PlThreshold(APoint *amat,Point *mat_target,char pros){
-	void ClacIntMat(APoint *amat){
-		int i,j;
-		for (i=0;i<MAT_HEIGHT;i++){
-			for (j=0;j<MAT_WIDTH;j++){
-				*(amat+i+j*(MAT_HEIGHT))=(int)(*(amat+i+j*(MAT_HEIGHT)));
-			}
-		}
-	}
-	int ClacOTSU(APoint *amat){
-		int matcount[256];
-		int matWeighting[256];
-		int i,j;
-		for (i=0;i<=255;i++){
-			matcount[i]=0;
-			matWeighting[i]=0;
-		}
-		for (i=0;i<MAT_HEIGHT;i++){
-			for (j=0;j<MAT_WIDTH;j++){
-				matcount[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=1;
-				matWeighting[(int)(*(amat+i+j*(MAT_HEIGHT)))]+=(int)(*(amat+i+j*(MAT_HEIGHT)));
-			}
-		}
-		for (i=1;i<=255;i++){
-			matcount[i]+=matcount[i-1];	//前向和
-			matWeighting[i]+=matWeighting[i-1];	//前向和
-		}
-		double maxG=0;
-		int threshold;
-		//平均加权灰度
-		double u=1.0*matWeighting[255]/matcount[255];
-		for (i=1;i<=255;i++){
-			//正向阀值占比
-			double w1=1.0*(matcount[255]-matcount[i-1])/matcount[255];
-			//平均加权灰度
-			double u1=1.0*(matWeighting[255]-matWeighting[i-1])/(matcount[255]-matcount[i-1]);
-			//反向阀值占比
-			double w2=1-w1;
-			//平均加权灰度
-			double u2=1.0*matWeighting[i-1]/matcount[i-1];
 
-			double G=w1*(u1-u)*(u1-u)+w2*(u2-u)*(u2-u);
-			if (G>maxG){
-				maxG=G;
-				threshold=i;
-			}
-		}
-		return(threshold);
-	}
-
-	ClacIntMat(amat);
-	int threshold=ClacOTSU(amat);
+	plClacIntMat(amat);
+	int threshold=plClacOTSU(amat);
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){

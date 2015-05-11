@@ -10,7 +10,7 @@ set (Tutorial_VERSION_MINOR 1)
 set(CMAKE_SOURCE_DIR ./src)
 
 set(SOURCE_FILES
-    src/main.c
+    src/easypr.c
     src/core/plate.c
     src/core/debug.c
     src/core/global.c

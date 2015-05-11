@@ -1,5 +1,7 @@
 //dlobal
 
+#define PI 3.1415926
+
 #define MAT_WIDTH 640
 #define MAT_HEIGHT 480
 
