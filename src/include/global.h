@@ -10,6 +10,17 @@
 #define DeColorG 0.587
 #define DeColorB 0.244
 
+#define PLSobel_X 1
+#define PLSobel_Y 0
+
+#define PlThreshold_POSITIVE 1
+#define PlThreshold_NAGARIVE 0
+
+#define PLMOP_HEIGHTR 1
+#define PLMOP_WIDTHR 8
+#define PLMOP_CLOSE 1
+#define PLMOP_OPEN 0
+
 extern const double SobleModuleX[3][3];
 extern const double SobleModuleY[3][3];
 

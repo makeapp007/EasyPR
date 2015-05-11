@@ -95,7 +95,7 @@ int PLSobel(APoint *amat,APoint *amat_target,char direction){
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			amattarget[i][j]=CalcSobel(i,j,amat,direction?SobleModuleX:SobleModuleY);
+			amattarget[i][j]=CalcSobel(i,j,amat,(direction==PLSobel_X)?SobleModuleX:SobleModuleY);
 		}
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
@@ -183,12 +183,84 @@ int PlThreshold(APoint *amat,Point *mat_target,char pros){
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(mat_target+i+j*(MAT_HEIGHT))=((*(amat+i+j*(MAT_HEIGHT)))>threshold);
+			if (pros==PlThreshold_POSITIVE){
+				*(mat_target+i+j*(MAT_HEIGHT))=((*(amat+i+j*(MAT_HEIGHT)))>threshold);
+			}else{
+				*(mat_target+i+j*(MAT_HEIGHT))=((*(amat+i+j*(MAT_HEIGHT)))<threshold);
+			}
 		}
 	}
 }
-int PLMopClode(){}
-int PLMopOpen(){}
+
+int PLExpand(Point *mat,Point *mat_target,int height,int width){
+	Mat mattarget;
+	int i,j,k,l;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			mattarget[i][j]=0;
+			for (k=-height;k<=height;k++){
+				for (l=-width;l<=width;l++){
+					if ((i+k<0)|(i+k>=MAT_HEIGHT)|(j+l<0)|(j+l>=MAT_WIDTH)){
+						continue;
+					}
+					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))>mattarget[i][j]){
+						mattarget[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
+					}
+				}
+			}
+		}
+	}
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(mat_target+i+j*(MAT_HEIGHT))=mattarget[i][j];
+		}
+	}
+}
+
+int PLCorrode(Point *mat,Point *mat_target,int height,int width){
+	Mat mattarget;
+	int i,j,k,l;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			mattarget[i][j]=255;
+			for (k=-height;k<=height;k++){
+				for (l=-width;l<=width;l++){
+					if ((i+k<0)|(i+k>=MAT_HEIGHT)|(j+l<0)|(j+l>=MAT_WIDTH)){
+						continue;
+					}
+					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))<mattarget[i][j]){
+						mattarget[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
+					}
+				}
+			}
+		}
+	}
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(mat_target+i+j*(MAT_HEIGHT))=mattarget[i][j];
+		}
+	}
+}
+
+int PLMop(Point *mat,Point *mat_target,int height,int width,char direction){
+	int result;
+	Mat mattarget;
+	if (direction==PLMOP_CLOSE){
+		result=PLExpand(mat,mattarget,height,width);
+		result=PLCorrode(mattarget,mattarget,height,width);
+	}else{
+		result=PLCorrode(mat,mattarget,height,width);	
+		result=PLExpand(mattarget,mattarget,height,width);	
+	}
+
+	int i,j;
+	for (i=0;i<MAT_HEIGHT;i++){
+		for (j=0;j<MAT_WIDTH;j++){
+			*(mat_target+i*(MAT_WIDTH)+j)=mattarget[i][j];
+		}
+	}
+}
+
 int PLFindRect(){}
 int PLVerifySize(){}
 int PLVerifyRotation(){}

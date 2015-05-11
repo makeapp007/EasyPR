@@ -27,15 +27,17 @@ int main(){
 	result=PLDeColor(rgbmat,amat);
 	// result=PrintAMat(amat,"002_PLDeColor.out");
 
-	result=PLSobel(amat,amat,1);
+	result=PLSobel(amat,amat,PLSobel_X);
 	// result=PrintAMat(amat,"003_PLSobel.out");
 
 	result=PLConvertScaleAbs(amat,amat);
 	// result=PrintAMat(amat,"004_PLConvertScaleAbs.out");
 
-	result=PlThreshold(amat,mat,1);
-	result=PrintMat(mat,"005_PlThreshold.out");
+	result=PlThreshold(amat,mat,PlThreshold_POSITIVE);
+	// result=PrintMat(mat,"005_PlThreshold.out");
 
+	result=PLMop(mat,mat,PLMOP_HEIGHTR,PLMOP_WIDTHR,PLMOP_CLOSE);
+	result=PrintMat(mat,"006_PLMop.out");
 	printf("finish\n");
 	return 0;
 }
