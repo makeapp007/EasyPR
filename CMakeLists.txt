@@ -12,6 +12,7 @@ set(CMAKE_SOURCE_DIR ./src)
 set(SOURCE_FILES
     src/easypr.c
     src/core/plate.c
+    src/core/pr.c
     src/core/debug.c
     src/core/global.c
 )
