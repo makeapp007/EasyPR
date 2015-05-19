@@ -3,6 +3,11 @@
 #include "../include/prep.h"
 #include "../include/plate.h"
 
+RGBMat trgbmat;
+AMat tamat;
+Mat tmat;
+Mat tmat2;
+
 //gaussian function
 double plGaussian(int x,int y,double sigma){
 	return exp(-(x*x+y*y)/(2*sigma*sigma))/(2*PI*sigma*sigma);
@@ -35,7 +40,6 @@ int plCalcGaussianMat(double *gaussianmat,int r,double sigma){
 //gaussian blur
 int PLGaussianBlur(RGBPoint *rgbmat,RGBPoint *rgbmat_target,int r){
 
-	RGBMat rgbmattarget;
 	double sigma=(GaussianD==0)?0.3*((GaussianR-1)*0.5-1)+0.8:GaussianD;	//sigma default function from opencv
 	double gaussianmat[2*r+1][2*r+1];
 	int result;
@@ -48,16 +52,16 @@ int PLGaussianBlur(RGBPoint *rgbmat,RGBPoint *rgbmat_target,int r){
 				for (l=0;l<2*r+1;l++){
 					int i0=((k-r+i>=MAT_HEIGHT)||(k-r+i<0))?r-k+i:k-r+i;
 					int j0=((l-r+j>=MAT_WIDTH)||(l-r+j<0))?r-l+j:l-r+j;
-					rgbmattarget[i][j].r+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).r;
-					rgbmattarget[i][j].g+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).g;
-					rgbmattarget[i][j].b+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).b;
+					trgbmat[i][j].r+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).r;
+					trgbmat[i][j].g+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).g;
+					trgbmat[i][j].b+=gaussianmat[k][l]*(*(rgbmat+i0+j0*(MAT_HEIGHT))).b;
 				}
 			}
 		}
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(rgbmat_target+i+j*(MAT_HEIGHT))=rgbmattarget[i][j];
+			*(rgbmat_target+i+j*(MAT_HEIGHT))=trgbmat[i][j];
 		}
 	}
 }
@@ -94,39 +98,35 @@ double plCalcSobel(int x,int y,APoint *amat,double SobleModule[3][3]){
 
 //Sobel filter
 int PLSobel(APoint *amat,APoint *amat_target,char direction){
-	AMat amattarget;
-
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			amattarget[i][j]=plCalcSobel(i,j,amat,(direction==PLSobel_X)?SobleModuleX:SobleModuleY);
+			tamat[i][j]=plCalcSobel(i,j,amat,(direction==PLSobel_X)?SobleModuleX:SobleModuleY);
 		}
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(amat_target+i+j*(MAT_HEIGHT))=amattarget[i][j];
+			*(amat_target+i+j*(MAT_HEIGHT))=tamat[i][j];
 		}
 	}
 }
 
 //ConvertScaleAbs filter
 int PLConvertScaleAbs(APoint *amat,APoint *amat_target){
-	AMat amattarget;
-
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
 			if (*(amat+i+j*(MAT_HEIGHT))>255){
-				amattarget[i][j]=255;
+				tamat[i][j]=255;
 			}else if (*(amat+i+j*(MAT_HEIGHT))<0){
-				amattarget[i][j]=0;
+				tamat[i][j]=0;
 			}
 		}
 	}
 
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(amat_target+i+j*(MAT_HEIGHT))=amattarget[i][j];
+			*(amat_target+i+j*(MAT_HEIGHT))=tamat[i][j];
 		}
 	}
 }
@@ -185,7 +185,6 @@ int plClacOTSU(APoint *amat){
 
 //PlThreshold filter & OTSU
 int PlThreshold(APoint *amat,Point *mat_target,char pros){
-
 	plClacIntMat(amat);
 	int threshold=plClacOTSU(amat);
 	int i,j;
@@ -201,18 +200,17 @@ int PlThreshold(APoint *amat,Point *mat_target,char pros){
 }
 
 int PLExpand(Point *mat,Point *mat_target,int height,int width){
-	Mat mattarget;
 	int i,j,k,l;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			mattarget[i][j]=0;
+			tmat2[i][j]=0;
 			for (k=-height;k<=height;k++){
 				for (l=-width;l<=width;l++){
 					if ((i+k<0)|(i+k>=MAT_HEIGHT)|(j+l<0)|(j+l>=MAT_WIDTH)){
 						continue;
 					}
-					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))>mattarget[i][j]){
-						mattarget[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
+					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))>tmat2[i][j]){
+						tmat2[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
 					}
 				}
 			}
@@ -220,24 +218,23 @@ int PLExpand(Point *mat,Point *mat_target,int height,int width){
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(mat_target+i+j*(MAT_HEIGHT))=mattarget[i][j];
+			*(mat_target+i+j*(MAT_HEIGHT))=tmat2[i][j];
 		}
 	}
 }
 
 int PLCorrode(Point *mat,Point *mat_target,int height,int width){
-	Mat mattarget;
 	int i,j,k,l;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			mattarget[i][j]=255;
+			tmat2[i][j]=255;
 			for (k=-height;k<=height;k++){
 				for (l=-width;l<=width;l++){
 					if ((i+k<0)|(i+k>=MAT_HEIGHT)|(j+l<0)|(j+l>=MAT_WIDTH)){
 						continue;
 					}
-					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))<mattarget[i][j]){
-						mattarget[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
+					if (*(mat+i+k+(j+l)*(MAT_HEIGHT))<tmat2[i][j]){
+						tmat2[i][j]=*(mat+i+k+(j+l)*(MAT_HEIGHT));
 					}
 				}
 			}
@@ -245,26 +242,25 @@ int PLCorrode(Point *mat,Point *mat_target,int height,int width){
 	}
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(mat_target+i+j*(MAT_HEIGHT))=mattarget[i][j];
+			*(mat_target+i+j*(MAT_HEIGHT))=tmat2[i][j];
 		}
 	}
 }
 
 int PLMop(Point *mat,Point *mat_target,int height,int width,char direction){
 	int result;
-	Mat mattarget;
 	if (direction==PLMOP_CLOSE){
-		result=PLExpand(mat,mattarget,height,width);
-		result=PLCorrode(mattarget,mattarget,height,width);
+		result=PLExpand(mat,tmat,height,width);
+		result=PLCorrode(tmat,tmat,height,width);
 	}else{
-		result=PLCorrode(mat,mattarget,height,width);	
-		result=PLExpand(mattarget,mattarget,height,width);	
+		result=PLCorrode(mat,tmat,height,width);	
+		result=PLExpand(tmat,tmat,height,width);	
 	}
 
 	int i,j;
 	for (i=0;i<MAT_HEIGHT;i++){
 		for (j=0;j<MAT_WIDTH;j++){
-			*(mat_target+i*(MAT_WIDTH)+j)=mattarget[i][j];
+			*(mat_target+i*(MAT_WIDTH)+j)=tmat[i][j];
 		}
 	}
 }
