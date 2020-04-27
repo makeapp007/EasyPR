@@ -2,10 +2,10 @@
 #ifndef __PREP_H__
 #define __PREP_H__
 
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/nonfree/features2d.hpp"
-#include "opencv/cvaux.h"
+#include "./opencv2/imgproc/imgproc.hpp"
+#include "./opencv2/highgui/highgui.hpp"
+#include "./opencv2/nonfree/features2d.hpp"
+#include "./opencv/cvaux.h"
 
 #if defined (WIN32) || defined (_WIN32)
 #include <objbase.h>
